@@ -1,0 +1,52 @@
+{
+  "comment": "SRDS'16 paper",
+  "source": {
+    "url": "~/data/geolife-tree",
+    "ops": [
+      "SplitByTemporalGap(duration=4.hours)",
+      "SplitByDuration(duration=1.day)",
+      "MinDuration(duration=2.hours)"
+    ]
+  },
+  "treatments": [
+    {
+      "name": "dynamic-smoothing",
+      "ops": [
+        "SpeedSmoothing(epsilon=Discrete(0.meter) + Range(50.meters;500.meters;1.meter))"
+      ],
+      "iters_per_step": 1,
+      "runs": 1,
+      "level": "track",
+      "objectives": [
+        "Minimize(privacy/fscore)",
+        "Maximize(utility/fscore)"
+      ]
+    },
+    {
+      "name": "static-smoothing",
+      "ops": [
+        "SpeedSmoothing(epsilon=Discrete(50.meters;100.meters;200.meters;300.meters;500.meters))"
+      ]
+    }
+  ],
+  "metrics": [
+    {
+      "name": "privacy",
+      "op": "PoisRetrieval(diameter=200.meters, duration=15.minutes, threshold=100.meters)"
+    },
+    {
+      "name": "utility",
+      "op": "AreaCoverage(level=15)"
+    }
+  ],
+  "analyzers": [
+    {
+      "name": "basic",
+      "op": "BasicAnalyzer"
+    },
+    {
+      "name": "pois",
+      "op": "PoisAnalyzer(diameter=200.meters, duration=15.minutes)"
+    }
+  ]
+}

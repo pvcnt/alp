@@ -1,0 +1,51 @@
+{
+  "comment": "SRDS'16 paper",
+  "runs": 3,
+  "source": {
+    "url": "~/data/geolife-tree",
+    "ops": [
+      "TemporalSampling(duration=30.seconds)",
+      "SplitByDuration(duration=1.day)",
+      "MinDuration(duration=2.hours)"
+    ]
+  },
+  "treatments": [
+    {
+      "name": "dynamic-geoind",
+      "ops": [
+        "GeoIndistinguishability(epsilon=Range(1;0.01;0.001) + Range(0.01;0.001;0.00001))"
+      ],
+      "level": "track",
+      "objectives": [
+        "Minimize(privacy/fscore)",
+        "Minimize(utility/avg,500)"
+      ]
+    },
+    {
+      "name": "static-geoind",
+      "ops": [
+        "GeoIndistinguishability(epsilon=Discrete(0.01;0.02;0.03;0.04;0.05))"
+      ]
+    }
+  ],
+  "metrics": [
+    {
+      "name": "privacy",
+      "op": "PoisRetrieval(diameter=200.meters, duration=15.minutes, threshold=100.meters)"
+    },
+    {
+      "name": "utility",
+      "op": "SpatialDistortion(interpolation=false)"
+    }
+  ],
+  "analyzers": [
+    {
+      "name": "basic",
+      "op": "BasicAnalyzer"
+    },
+    {
+      "name": "pois",
+      "op": "PoisAnalyzer(diameter=200.meters, duration=15.minutes)"
+    }
+  ]
+}

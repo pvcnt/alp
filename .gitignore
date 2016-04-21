@@ -1,0 +1,10 @@
+# IDE-specific files
+/.idea/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# SBT-specific files
+target/
+sbt-launch.jar
