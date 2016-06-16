@@ -8,3 +8,6 @@ Thumbs.db
 # SBT-specific files
 target/
 sbt-launch.jar
+
+# Products.
+/dist/
