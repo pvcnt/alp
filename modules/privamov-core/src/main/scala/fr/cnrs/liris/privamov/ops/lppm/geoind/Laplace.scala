@@ -57,7 +57,8 @@ private[geoind] object Laplace {
 
   def noise(epsilon: Double): Distance = {
     val z = Math.random
-    val r = -(LambertW.lambertWm1(-(1 - z) / Math.E) - 1) / epsilon
+    val x = (z - 1) / Math.E
+    val r = -(LambertW.lambertWm1(x) + 1) / epsilon
     Distance.meters(r)
   }
 }

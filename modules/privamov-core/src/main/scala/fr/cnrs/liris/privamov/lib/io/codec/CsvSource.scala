@@ -38,7 +38,7 @@ import com.typesafe.scalalogging.LazyLogging
 import fr.cnrs.liris.privamov.model.{Record, Track}
 import fr.cnrs.liris.privamov.lib.io.index.{DirectoryIndex, Index}
 import fr.cnrs.liris.privamov.lib.io.reader.{EncodedRecord, RecordReader, TextLineReader, WholeFileReader}
-import fr.cnrs.liris.privamov.geo.Point
+import fr.cnrs.liris.privamov.geo.{LatLng, Point}
 
 import scala.reflect._
 
@@ -58,22 +58,26 @@ class CsvDecoder extends Decoder[Record] with LazyLogging {
   override def decode(record: EncodedRecord): Option[Record] = {
     val line = new String(record.bytes).trim
     val parts = line.split(",")
-    if (parts.length != 3) {
+    if (parts.length < 3 || parts.length > 4) {
       logger.warn(s"Invalid line in ${record.url}: $line")
       None
     } else {
-      val x = parts(0).toDouble
-      val y = parts(1).toDouble
-      val time = Instant.ofEpochSecond(parts(2).toLong)
-      val user = record.labels.mkString(",")
-      Some(Record(user, Point(x, y), time))
+      val (user, lat, lng, time) = if (parts.length == 4) {
+        (parts(0), parts(1).toDouble, parts(2).toDouble, parts(3).toLong)
+      } else {
+        (record.labels.mkString(","), parts(0).toDouble, parts(1).toDouble, parts(2).toLong)
+      }
+      val point = LatLng.degrees(lat, lng).toPoint
+      Some(Record(user, point, Instant.ofEpochMilli(time)))
     }
   }
 }
 
 class CsvEncoder extends Encoder[Record] {
-  override def encode(obj: Record): Array[Byte] =
-    s"${obj.user},${obj.point.x},${obj.point.y},${obj.time.getEpochSecond}".getBytes
+  override def encode(obj: Record): Array[Byte] = {
+    val latLng = obj.point.toLatLng
+    s"${obj.user},${latLng.lat.degrees},${latLng.lng.degrees},${obj.time.toEpochMilli}".getBytes
+  }
 }
 
 case class CsvTrackSource(url: String) extends DataSource[Track] {

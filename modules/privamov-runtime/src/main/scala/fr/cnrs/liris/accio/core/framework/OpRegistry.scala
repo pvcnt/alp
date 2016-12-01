@@ -37,7 +37,7 @@ import java.util.NoSuchElementException
 import fr.cnrs.liris.privamov.ops.analysis.{BasicAnalyzer, PoisAnalyzer}
 import fr.cnrs.liris.privamov.ops.eval._
 import fr.cnrs.liris.privamov.ops.lppm.SpeedSmoothing
-import fr.cnrs.liris.privamov.ops.lppm.geoind.{GeoIndistinguishability, PredictiveMechanism}
+import fr.cnrs.liris.privamov.ops.lppm.geoind.{GeoIndistinguishability}
 import fr.cnrs.liris.privamov.ops.prepare._
 
 /**
@@ -64,7 +64,6 @@ class OpRegistry {
       // Protection mechanisms
       classOf[GeoIndistinguishability],
       classOf[SpeedSmoothing],
-      classOf[PredictiveMechanism],
 
       // Evaluators
       classOf[PoisRetrieval],
